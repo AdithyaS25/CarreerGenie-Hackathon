@@ -32,14 +32,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en">
-      <body className="min-h-screen">
-        <div
-          className={`min-h-screen flex flex-col relative bg-animated transition-colors duration-500 ${
-            darkMode
-              ? "bg-gradient-to-r from-gray-900 via-gray-700 to-gray-800"
-              : "bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400"
-          }`}
-        >
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="min-h-screen font-[Orbitron] overflow-x-hidden transition-colors duration-500">
+        <div className={`min-h-screen flex flex-col relative ${darkMode ? "dark" : ""}`}>
           {/* Theme Toggle Button */}
           <button
             onClick={() => setDarkMode(!darkMode)}
@@ -49,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {darkMode ? "🌞" : "🌙"}
           </button>
 
+          {/* Page Content */}
           {children}
         </div>
       </body>
