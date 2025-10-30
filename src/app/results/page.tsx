@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 type StaticRole = {
   role: string;
@@ -30,15 +32,12 @@ export default function ResultsPage() {
         });
 
         const data = await res.json();
-
         if (data.roadmap) {
           setRoadmap(data.roadmap);
           setIsFallback(data.llmFailed);
           setTopRoles(data.topRoles || []);
 
-          if (data.topRoles?.length === 1) {
-            setSelectedRole(data.topRoles[0]);
-          }
+          if (data.topRoles?.length === 1) setSelectedRole(data.topRoles[0]);
         } else {
           setRoadmap([{ role: "N/A", description: "No roadmap found", skills: [], resources: [] }]);
           setIsFallback(true);
@@ -55,48 +54,30 @@ export default function ResultsPage() {
     fetchRoadmap();
   }, []);
 
-  const renderTextWithLinks = (text: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const parts = text.split(urlRegex);
-    return parts.map((part, i) =>
-      urlRegex.test(part) ? (
-        <a
-          key={i}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 underline hover:text-blue-800"
-        >
-          {part}
-        </a>
-      ) : (
-        part
-      )
-    );
-  };
-
   const renderRoadmap = () => {
     if (typeof roadmap === "string") {
-      return <p className="text-gray-800 dark:text-gray-300 whitespace-pre-line">{renderTextWithLinks(roadmap)}</p>;
+      return <p className="text-gray-300 whitespace-pre-line">{roadmap}</p>;
     } else if (Array.isArray(roadmap) && selectedRole) {
       const roleData = roadmap.find((r: StaticRole) => r.role === selectedRole);
       if (!roleData) return null;
 
       return (
         <div>
-          <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">{roleData.role}</h3>
-          <p className="mb-2 text-gray-800 dark:text-gray-300">{roleData.description}</p>
-          <p className="font-semibold text-gray-900 dark:text-gray-100">Skills:</p>
-          <ul className="list-disc list-inside mb-2 text-gray-700 dark:text-gray-300">
+          <h3 className="text-2xl font-bold mb-3 text-[var(--accent)]">{roleData.role}</h3>
+          <p className="mb-4 text-gray-300">{roleData.description}</p>
+
+          <p className="font-semibold text-gray-100">Skills:</p>
+          <ul className="list-disc list-inside mb-4 text-gray-400">
             {roleData.skills.map((s) => (
               <li key={s}>{s}</li>
             ))}
           </ul>
-          <p className="font-semibold text-gray-900 dark:text-gray-100">Resources:</p>
-          <ul className="list-disc list-inside text-blue-600 dark:text-blue-400">
+
+          <p className="font-semibold text-gray-100">Resources:</p>
+          <ul className="list-disc list-inside text-[var(--accent)]">
             {roleData.resources.map((r) => (
               <li key={r}>
-                <a href={r} target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-800">
+                <a href={r} target="_blank" rel="noopener noreferrer" className="underline hover:text-white">
                   {r}
                 </a>
               </li>
@@ -108,25 +89,31 @@ export default function ResultsPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 transition-colors duration-500 ease-in-out">
-      <h2 className="text-4xl font-bold mb-8 text-white text-center drop-shadow-lg">Your Career Roadmap</h2>
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-[var(--accent-dim)] rounded-full blur-[150px] opacity-40 animate-pulse"></div>
 
-      <div className="w-full max-w-lg bg-white/80 dark:bg-gray-900/80 rounded-xl p-6 shadow-lg backdrop-blur-md card">
+      <h2 className="text-5xl font-bold mb-10 text-[var(--accent)] drop-shadow-[0_0_12px_var(--accent-dim)] text-center">
+        Your Career Roadmap
+      </h2>
+
+      <Card className="w-full max-w-2xl p-6">
         {loading ? (
-          <p className="text-center text-gray-700 dark:text-gray-300">Generating your roadmap...</p>
+          <p className="text-center text-gray-400">Generating your roadmap...</p>
         ) : (
           <div>
             {isFallback && (
-              <p className="text-sm text-red-600 mb-4 text-center font-semibold">⚠ Using static fallback roadmap due to API limit or key issue</p>
+              <p className="text-sm text-red-500 mb-4 text-center font-semibold">
+                ⚠ Using static fallback roadmap
+              </p>
             )}
 
             {topRoles.length > 1 && (
               <div className="mb-4">
-                <label className="font-semibold mr-2 text-gray-900 dark:text-gray-100">Select Role:</label>
+                <label className="font-semibold mr-2 text-gray-200">Select Role:</label>
                 <select
                   value={selectedRole || ""}
                   onChange={(e) => setSelectedRole(e.target.value)}
-                  className="p-1 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  className="p-2 rounded-md bg-gray-800 border border-gray-700 text-gray-100"
                 >
                   <option value="">--Choose--</option>
                   {topRoles.map((role) => (
@@ -140,15 +127,12 @@ export default function ResultsPage() {
 
             {renderRoadmap()}
 
-            <button
-              onClick={() => router.push("/quiz")}
-              className="mt-6 w-full bg-purple-600 text-white py-3 rounded-xl font-semibold hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition-colors btn"
-            >
+            <Button onClick={() => router.push("/quiz")} className="mt-6 w-full">
               Retake Quiz
-            </button>
+            </Button>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

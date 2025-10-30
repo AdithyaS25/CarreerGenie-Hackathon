@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 const questions = [
   "How much do you enjoy writing code and building software?",
@@ -47,8 +49,8 @@ export default function QuizPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
-      {/* Subtle floating glow */}
-      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-[var(--accent-dim)] rounded-full blur-[150px] opacity-60 animate-pulse"></div>
+      {/* Glowing background blobs */}
+      <div className="absolute -top-40 -left-40 w-[400px] h-[400px] bg-[var(--accent-dim)] rounded-full blur-[150px] opacity-50 animate-pulse"></div>
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[var(--accent-dim)] rounded-full blur-[180px] opacity-40 animate-pulse"></div>
 
       <motion.h2
@@ -61,7 +63,7 @@ export default function QuizPage() {
       </motion.h2>
 
       {/* Progress Bar */}
-      <div className="w-full max-w-lg bg-gray-900/60 border border-gray-700/60 rounded-2xl p-6 shadow-lg backdrop-blur-md mb-8 card">
+      <Card className="w-full max-w-lg p-6 mb-8">
         <div className="w-full bg-gray-800 rounded-full h-3 overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
@@ -73,7 +75,7 @@ export default function QuizPage() {
         <p className="text-center text-sm text-gray-400 mt-3 font-medium tracking-wide">
           Question {current + 1} of {questions.length} ({progress}%)
         </p>
-      </div>
+      </Card>
 
       {/* Question Card */}
       <div className="w-full max-w-lg relative h-[260px]">
@@ -85,59 +87,58 @@ export default function QuizPage() {
             animate="animate"
             exit="exit"
             transition={{ duration: 0.35, ease: "easeInOut" }}
-            className="absolute inset-0 card bg-gray-900/70 border border-gray-700/70 text-gray-100 p-8 shadow-xl backdrop-blur-xl flex flex-col justify-between text-center"
+            className="absolute inset-0 card p-8 flex flex-col justify-between text-center"
           >
-            <p className="font-semibold text-lg leading-relaxed tracking-wide">
+            <p className="font-semibold text-lg leading-relaxed tracking-wide text-gray-100">
               {questions[current]}
             </p>
 
-            <input
-              type="range"
-              min={0}
-              max={10}
-              value={answers[current]}
-              onChange={(e) => handleChange(Number(e.target.value))}
-              className="w-full accent-[var(--accent)] cursor-pointer mt-5 h-2 bg-gray-700 rounded-lg appearance-none"
-            />
-            <div className="text-right text-sm text-gray-400 mt-2">{answers[current]}</div>
+            {/* Enhanced Slider */}
+            <div className="relative w-full mt-5">
+              <input
+                type="range"
+                min={0}
+                max={10}
+                value={answers[current]}
+                onChange={(e) => handleChange(Number(e.target.value))}
+                className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                style={{
+                  background: `linear-gradient(to right, var(--accent) ${(answers[current] / 10) * 100}%, #374151 ${(answers[current] / 10) * 100}%)`,
+                }}
+              />
+              <div className="text-right text-sm text-gray-400 mt-2">
+                {answers[current]}
+              </div>
+            </div>
 
+            {/* Navigation */}
             <div className="flex justify-between mt-6">
-              <button
+              <Button
+                variant="outline"
                 onClick={prevQuestion}
                 disabled={current === 0}
-                className={`px-6 py-2 rounded-xl font-semibold transition-all duration-300 ${
-                  current === 0
-                    ? "bg-gray-700 text-gray-400 cursor-not-allowed"
-                    : "bg-gray-800 text-[var(--accent)] border border-[var(--accent)] hover:bg-[var(--accent)] hover:text-black shadow-[0_0_15px_var(--accent-dim)]"
-                }`}
+                className={current === 0 ? "opacity-50 cursor-not-allowed" : ""}
               >
                 Previous
-              </button>
+              </Button>
 
               {current < questions.length - 1 ? (
-                <button
+                <Button
                   onClick={nextQuestion}
                   disabled={answers[current] === 0}
-                  className={`px-6 py-2 rounded-xl font-semibold transition-all duration-300 ${
-                    answers[current] === 0
-                      ? "bg-gray-700 text-gray-400 cursor-not-allowed"
-                      : "bg-[var(--accent)] text-black hover:scale-105 shadow-[0_0_20px_var(--accent-dim)]"
-                  }`}
+                  className={answers[current] === 0 ? "opacity-50 cursor-not-allowed" : ""}
                 >
                   Next
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
+                  variant="success"
                   onClick={handleSubmit}
                   disabled={answers.includes(0)}
-                  className={`px-6 py-2 rounded-xl font-semibold transition-all duration-300 ${
-                    answers.includes(0)
-                      ? "bg-gray-700 text-gray-400 cursor-not-allowed"
-                      : "bg-green-500 text-black hover:scale-105 shadow-[0_0_20px_rgba(34,197,94,0.4)]"
-                  }`}
+                  className={answers.includes(0) ? "opacity-50 cursor-not-allowed" : ""}
                 >
                   See Results
-                </button>
+                </Button>
               )}
             </div>
           </motion.div>

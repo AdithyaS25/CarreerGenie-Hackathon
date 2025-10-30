@@ -36,15 +36,6 @@
     }
   }
 
-  /* Dark mode adjustments */
-  .dark body {
-    background-color: #0b0c10;
-    background-image:
-      linear-gradient(var(--grid-color) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px),
-      radial-gradient(circle at 70% 30%, rgba(0, 255, 180, 0.1), transparent 25%);
-  }
-
   /* Glassy Cards */
   .card {
     @apply bg-gray-900/60 border border-gray-700/60 rounded-2xl shadow-lg backdrop-blur-md transition-all duration-500 hover:shadow-[0_0_25px_var(--accent-dim)];
