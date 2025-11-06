@@ -8,7 +8,7 @@ export default function LandingPage() {
     <div className="flex flex-col items-center justify-center min-h-screen text-center px-6">
       {/* Title */}
       <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-5 text-[var(--accent)] drop-shadow-[0_0_10px_rgba(0,255,255,0.6)] tracking-wide">
-        Welcome to CareerWise
+        Welcome to CareerGenie
       </h1>
 
       {/* Subtitle */}
